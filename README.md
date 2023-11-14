@@ -1,4 +1,8 @@
-# AI Transcription tool
+# AI Transcription
+
+<p align="center">
+  <img src="https://github.com/lorenzopicoli/ai-transcription/assets/2422968/0b2447c3-d80b-42da-b4b4-6cd3b297a596" height="400" />
+</p>
 
 This python script will:
 
@@ -9,7 +13,7 @@ This python script will:
 
 Transcribe audio with Whisper and speaker diarization.
 
-`python3 main.py -i <path-to-input-dir> -o <path-to-output-dir> -w <path>/whisper.cpp/main -m '<path>/whisper.cpp/models/<chose-model>.bin'`
+`python3 main.py -i <path-to-input-dir> -o <path-to-output-dir> -w <path>/whisper.cpp/main -m '<path>/whisper.cpp/models/<chose-model>.bin' -s 2`
 
 Files in the input directory can be `.mp3` and `.m4a`.
 
@@ -17,9 +21,11 @@ It runs pretty slowly, but the goal is that your recordings can be saved to a fo
 
 ## Example
 
-Input: `destin-example.m4a` (Source: https://www.youtube.com/watch?v=GpWQHFzrEqc)
+**Input**: `destin-example.m4a` ([Source](https://www.youtube.com/watch?v=GpWQHFzrEqc))
 
-Output:
+**Command**: `python3 main.py -i 'recordings/in' -o recordings/out -w whisper.cpp/main -m whisper.cpp/models/ggml-large-v2.bin -s 2`
+
+**Output**:
 
 ---
 
