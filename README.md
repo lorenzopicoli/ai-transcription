@@ -15,9 +15,16 @@ Transcribe audio with Whisper and speaker diarization.
 
 `python3 main.py -i <path-to-input-dir> -o <path-to-output-dir> -w <path>/whisper.cpp/main -m '<path>/whisper.cpp/models/<chose-model>.bin' -s 2`
 
-Files in the input directory can be `.mp3` and `.m4a`.
+Files in the input directory can be `.mp3` and `.m4a` or `.wav`.
 
 It runs pretty slowly, but the goal is that your recordings can be saved to a folder that is constantly watched by this script and then the transcription would eventually show up in your Obsidian vault or whatever app is used to manage transcriptions.
+
+## Requirements
+
+- [Whisper.cpp](https://github.com/ggerganov/whisper.cpp) setup with models downloaded already
+- Python
+- A huggingface token (replace it in `main.py`)
+- `ffmpeg` installed
 
 ## Example
 
