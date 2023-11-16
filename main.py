@@ -126,14 +126,18 @@ def convert_to_wav(file_path, out_path):
 
 
 def diarize(file):
+    speakers = int(config['speakers'])
+    if speakers == 1:
+      audio = AudioSegment.from_file(file)
+      return {(0, len(audio)): 'SPEAKER_0'}
     with DiarizationProgressHook() as hook:
+      
         # load to memory
         waveform, sample_rate = torchaudio.load(file)
         pipeline = Pipeline.from_pretrained(
             "pyannote/speaker-diarization-3.0",
             use_auth_token="xxxx")
-        diarization = pipeline({'waveform': waveform, 'sample_rate': sample_rate}, num_speakers=int(
-            config['speakers']), hook=hook)
+        diarization = pipeline({'waveform': waveform, 'sample_rate': sample_rate}, num_speakers=speakers, hook=hook)
 
         rttm_path = temp_dir.joinpath(file.with_suffix('.rttm'))
 
@@ -143,6 +147,20 @@ def diarize(file):
     parsed = parse_rttm(rttm_path)
 
     return parsed
+  
+def compress(file, out_path):
+    convert_command = [
+      'ffmpeg',
+      '-i',
+      file,
+      '-acodec',
+      'aac',
+      '-ab',
+      '128k',
+      '-y',
+      out_path,
+    ]
+    subprocess.run(convert_command, check=True)
 
 
 def whisper(in_path):
@@ -152,7 +170,7 @@ def whisper(in_path):
         '-m', config['model'],
         in_path,
         '-l', 'en',
-        # '-bs', '5',
+        '-bs', '5',
         # '-et', '2.8',
         # '-mc', '64',
         # '-ml', '1',
@@ -182,7 +200,7 @@ def transcribe(in_dir, out_dir):
     out_directory = Path(out_dir)
     # Find all mp3 or m4a files in the inDir
     files = [f for f in directory.glob(
-        '*') if f.is_file() and (f.suffix == '.mp3' or f.suffix == '.m4a')]
+        '*') if f.is_file() and (f.suffix == '.mp3' or f.suffix == '.m4a' or f.suffix == '.wav')]
 
     for file in files:
         wav = out_directory.joinpath(file.stem + '.wav')
@@ -200,6 +218,8 @@ def transcribe(in_dir, out_dir):
                 [md_content, f"*{start_formatted}* - *{end_formatted}* **[[{speaker}]]**:{extract_transcription}"])
         with open(out_directory.joinpath(file.stem + '.md'), 'w') as md_file:
             md_file.write(md_content)
+        
+        compress(file, out_directory.joinpath(file.stem + '-compressed' + '.m4a'))
     remove_temp()
 
 
